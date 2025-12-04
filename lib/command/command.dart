@@ -1,16 +1,19 @@
 import 'package:teledart/model.dart';
 import 'package:teledart/teledart.dart';
+import 'package:telegram_bot/command/listener.dart';
 
-class CommandHandler {
-  static TeleDart? _teleDart;
-  static TeleDart? get teleDart => _teleDart;
+class Command {
+  TeleDart? _teleDart;
+  TeleDart? get teleDart => _teleDart;
+  Listener? listener;
 
-  static void init(TeleDart teledart)
+  Command(TeleDart teledart)
   {
     _teleDart = teledart;
+    listener = Listener(teledart).init();
   }
 
-  static void initCommand() {
+  void initCommand() {
     _teleDart!.setMyCommands([
       BotCommand(command: "/start", description: "Start"),
       BotCommand(command: "/info", description: "Information"),
