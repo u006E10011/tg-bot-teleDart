@@ -7,10 +7,10 @@ class Command {
   TeleDart? get teleDart => _teleDart;
   Listener? listener;
 
-  Command(TeleDart teledart)
+  Command(TeleDart teleDart)
   {
-    _teleDart = teledart;
-    listener = Listener(teledart).init();
+    _teleDart = teleDart;
+    listener = Listener().addListeners(teleDart);
   }
 
   void initCommand() {

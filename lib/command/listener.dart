@@ -1,25 +1,17 @@
 import 'package:teledart/teledart.dart';
-import 'package:telegram_bot/command/command.dart';
 
 class Listener {
-  final TeleDart _teleDart;
+  
+  final Map<String, String> command = {
+    "start": "GitHub: https://github.com/u006E10011/tg-bot-teleDart",
+    "info": "NullReferenceException"
+  };
 
-  Listener(this._teleDart);
-
-  Listener init()
+  Listener addListeners(TeleDart teleDart)
   {
-    start();
-    info();
-    return this;
-  }
+    command.forEach((key, value) => teleDart.onMessage(entityType: "bot_command", keyword: key).listen(
+      (message) => teleDart.sendMessage(message.chat.id, value),));
 
-  void start() {
-    _teleDart.onMessage(entityType: 'bot_command', keyword: 'start').listen(
-    (message) => _teleDart.sendMessage(message.chat.id, "GitHub: https://github.com/u006E10011/tg-bot-teleDart"),);
-  }
-
-  void info() {
-    _teleDart.onMessage(entityType: 'bot_command', keyword: 'info').listen(
-    (message) => _teleDart.sendMessage(message.chat.id, "NullReferenceException"),);
+      return this;
   }
 }
