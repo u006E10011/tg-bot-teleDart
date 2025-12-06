@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:teledart/teledart.dart';
 import 'package:teledart/telegram.dart';
-import 'package:telegram_bot/command/command.dart';
+import './command/command.dart';
 import 'package:telegram_bot/token.dart';
+import './tele_dart_provider.dart';
 
 Future<void> main() async 
 {
@@ -14,5 +15,6 @@ Future<void> main() async
   teledart.setMyShortDescription("The bot is written in Dart", "ru");
   stdout.write("Starting bot: ${bot.firstName}(${bot.username})");
 
+  TeleDartProvider(teledart);
   Command(teledart).initCommand();
 }

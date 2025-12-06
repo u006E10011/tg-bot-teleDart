@@ -1,6 +1,6 @@
 import 'package:teledart/model.dart';
 import 'package:teledart/teledart.dart';
-import 'package:telegram_bot/command/listener.dart';
+import './listener.dart';
 
 class Command {
   TeleDart? _teleDart;
@@ -17,6 +17,7 @@ class Command {
     _teleDart!.setMyCommands([
       BotCommand(command: "/start", description: "Start"),
       BotCommand(command: "/info", description: "Information"),
+      BotCommand(command: "/filter", description: "Filter"),
     ]);
   }
 }
