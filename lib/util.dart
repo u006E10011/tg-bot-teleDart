@@ -1,4 +1,3 @@
-export 'core/bot.dart';
 export 'core/tele_dart_provider.dart';
 export 'core/token.dart';
 
