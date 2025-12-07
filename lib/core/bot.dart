@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:teledart/teledart.dart';
 import 'package:teledart/telegram.dart';
-import './command/command.dart';
-import 'package:telegram_bot/token.dart';
-import './tele_dart_provider.dart';
+import 'package:telegram_bot/util.dart';
 
 Future<void> main() async 
 {

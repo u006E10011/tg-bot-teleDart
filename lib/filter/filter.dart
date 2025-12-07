@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:telegram_bot/filter/filter_data.dart';
-import 'package:telegram_bot/tele_dart_provider.dart';
+import 'package:telegram_bot/core/tele_dart_provider.dart';
 
 import 'package:teledart/model.dart' as teleDart;
 

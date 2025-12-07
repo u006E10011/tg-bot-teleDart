@@ -1,6 +1,6 @@
 import 'package:teledart/model.dart';
 import 'package:teledart/teledart.dart';
-import './listener.dart';
+import 'package:telegram_bot/util.dart';
 
 class Command {
   TeleDart? _teleDart;
