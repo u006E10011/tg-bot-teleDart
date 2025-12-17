@@ -17,7 +17,9 @@ class Command {
     _teleDart!.setMyCommands([
       BotCommand(command: "/start", description: "Start"),
       BotCommand(command: "/info", description: "Information"),
-      BotCommand(command: "/filter", description: "Filter"),
+      BotCommand(command: "/filter", description: "Create filter"),
+      BotCommand(command: "/mfilters", description: "My filters"),
+      BotCommand(command: "/filters", description: "All filters"),
     ]);
   }
 }

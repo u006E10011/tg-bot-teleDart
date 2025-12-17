@@ -1,8 +1,6 @@
 import 'package:teledart/teledart.dart';
 import 'package:teledart/model.dart';
-import '../filter/filter_model.dart';
-import '../filter/filter_service.dart';
-import '../core/tele_dart_provider.dart';
+import 'package:telegram_bot/util.dart';
 
 class Listener {
   final Map<String, String> command = {
@@ -17,20 +15,16 @@ class Listener {
     );
 
     teleDart.onCommand('filter').listen(_handleFilterCommand);
+    teleDart.onCommand('mfilters').listen(FiltersCommand.handleMyFilters);
+    teleDart.onCommand('mf').listen(FiltersCommand.handleMyFilters);
+    teleDart.onCommand('filters').listen(FiltersCommand.handleAllFilters);
+    teleDart.onCommand('f').listen(FiltersCommand.handleAllFilters);
     teleDart.onMessage().listen(_checkForFilters);
 
     return this;
   }
 
   Future<void> _handleFilterCommand(Message message) async {
-    if (message.replyToMessage == null) {
-      await TeleDartProvider.teleDart!.sendMessage(
-        message.chat.id,
-        'Используйте команду ответом на сообщение: /filter <название>',
-      );
-      return;
-    }
-
     final args = message.text?.split(' ');
     if (args == null || args.length < 2) {
       await TeleDartProvider.teleDart!.sendMessage(
@@ -41,6 +35,25 @@ class Listener {
     }
 
     final key = args.sublist(1).join(' ');
+    
+    final existingFilter = await FilterService.checkFilterExists(key);
+    if (existingFilter != null) {
+      await TeleDartProvider.teleDart!.sendMessage(
+        message.chat.id,
+        'Фильтр $key уже существует. Посмотреть список созданных фильтров /mfilters',
+      );
+      await _sendFilterMedia(message.chat.id, message.messageId, existingFilter);
+      return;
+    }
+
+    if (message.replyToMessage == null) {
+      await TeleDartProvider.teleDart!.sendMessage(
+        message.chat.id,
+        'Используйте команду ответом на сообщение: /filter <название>',
+      );
+      return;
+    }
+    
     final replyMsg = message.replyToMessage!;
     String url = '';
     String mediaType = 'text';
@@ -80,7 +93,9 @@ class Listener {
     );
 
     try {
-      await FilterService.saveFilter(message.from!.id, filter);
+      final user = message.from!;
+      final name = '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim();
+      await FilterService.saveFilter(user.id, name, user.username ?? '', filter);
       await TeleDartProvider.teleDart!.sendMessage(
         message.chat.id,
         'Фильтр "$key" сохранён',

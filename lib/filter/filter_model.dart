@@ -31,5 +31,5 @@ class FilterModel {
     mediaType: json['mediaType'] ?? 'text',
   );
 
-  String toJsonString() => jsonEncode(toJson());
+  String toJsonString() => JsonEncoder.withIndent('  ').convert(toJson());
 }

@@ -5,31 +5,67 @@ import 'package:telegram_bot/util.dart';
 class FilterService {
   static const String _basePath = 'data/filter';
 
-  static Future<void> saveFilter(int userId, FilterModel filter) async {
-    final dir = Directory('$_basePath/$userId');
-    if (!await dir.exists()) {
-      await dir.create(recursive: true);
-    }
+  static Future<UserData?> _getUserData(int userId) async {
+    final file = File('$_basePath/$userId.json');
+    if (!await file.exists()) return null;
+    final content = await file.readAsString();
+    return UserData.fromJson(jsonDecode(content));
+  }
 
-    final file = File('${dir.path}/${filter.key}.json');
-    await file.writeAsString(filter.toJsonString());
+  static Future<void> _saveUserData(UserData userData) async {
+    final dir = Directory(_basePath);
+    if (!await dir.exists()) await dir.create(recursive: true);
+    final file = File('$_basePath/${userData.userId}.json');
+    await file.writeAsString(userData.toJsonString());
+  }
+
+  static Future<FilterModel?> checkFilterExists(String key) async {
+    final dir = Directory(_basePath);
+    if (!await dir.exists()) return null;
+    
+    await for (final file in dir.list().where((f) => f.path.endsWith('.json'))) {
+      final content = await File(file.path).readAsString();
+      final userData = UserData.fromJson(jsonDecode(content));
+      for (final filter in userData.filters) {
+        if (filter.key == key) return filter;
+      }
+    }
+    return null;
+  }
+
+  static Future<void> saveFilter(int userId, String name, String username, FilterModel filter) async {
+    var userData = await _getUserData(userId) ?? UserData(
+      name: name,
+      username: username,
+      userId: userId,
+      filters: [],
+    );
+    
+    userData = UserData(
+      name: name,
+      username: username,
+      userId: userId,
+      filters: [...userData.filters, filter],
+    );
+    
+    await _saveUserData(userData);
   }
 
   static Future<List<FilterModel>> getFilters(int userId) async {
-    final dir = Directory('$_basePath/$userId');
+    final userData = await _getUserData(userId);
+    return userData?.filters ?? [];
+  }
+
+  static Future<List<FilterModel>> getAllFilters() async {
+    final dir = Directory(_basePath);
     if (!await dir.exists()) return [];
-
-    final files = await dir
-        .list()
-        .where((f) => f.path.endsWith('.json'))
-        .toList();
-    final filters = <FilterModel>[];
-
-    for (final file in files) {
+    
+    final allFilters = <FilterModel>[];
+    await for (final file in dir.list().where((f) => f.path.endsWith('.json'))) {
       final content = await File(file.path).readAsString();
-      filters.add(FilterModel.fromJson(jsonDecode(content)));
+      final userData = UserData.fromJson(jsonDecode(content));
+      allFilters.addAll(userData.filters);
     }
-
-    return filters;
+    return allFilters;
   }
 }
