@@ -23,11 +23,12 @@ class FilterService {
     final dir = Directory(_basePath);
     if (!await dir.exists()) return null;
     
+    final lowerKey = key.toLowerCase();
     await for (final file in dir.list().where((f) => f.path.endsWith('.json'))) {
       final content = await File(file.path).readAsString();
       final userData = UserData.fromJson(jsonDecode(content));
       for (final filter in userData.filters) {
-        if (filter.key == key) return filter;
+        if (filter.key == lowerKey) return filter;
       }
     }
     return null;

@@ -34,7 +34,7 @@ class Listener {
       return;
     }
 
-    final key = args.sublist(1).join(' ');
+    final key = args.sublist(1).join(' ').toLowerCase();
     
     final existingFilter = await FilterService.checkFilterExists(key);
     if (existingFilter != null) {
@@ -112,8 +112,9 @@ class Listener {
     if (message.text == null || message.from == null) return;
     
     final filters = await FilterService.getFilters(message.from!.id);
+    final messageText = message.text!.toLowerCase();
     for (final filter in filters) {
-      if (message.text!.contains(filter.key)) {
+      if (messageText.contains(filter.key)) {
         await _sendFilterMedia(message.chat.id, message.messageId, filter);
         break;
       }
