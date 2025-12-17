@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class FilterModel {
   final String key;
@@ -19,7 +20,7 @@ class FilterModel {
     'key': key,
     'url': url,
     'description': description,
-    'date': date.toIso8601String(),
+    'date': DateFormat('dd.MM.yyyy HH:mm').format(date),
     'mediaType': mediaType,
   };
 
@@ -27,9 +28,17 @@ class FilterModel {
     key: json['key'],
     url: json['url'],
     description: json['description'],
-    date: DateTime.parse(json['date']),
+    date: _parseDate(json['date']),
     mediaType: json['mediaType'] ?? 'text',
   );
+
+  static DateTime _parseDate(String dateStr) {
+    try {
+      return DateFormat('dd.MM.yyyy HH:mm').parse(dateStr);
+    } catch (e) {
+      return DateTime.parse(dateStr);
+    }
+  }
 
   String toJsonString() => JsonEncoder.withIndent('  ').convert(toJson());
 }

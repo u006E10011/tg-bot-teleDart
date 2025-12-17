@@ -29,7 +29,7 @@ class Listener {
     if (args == null || args.length < 2) {
       await TeleDartProvider.teleDart!.sendMessage(
         message.chat.id,
-        'Укажите название фильтра: /filter <название>',
+        'Создать фильтр: /filter <название>',
       );
       return;
     }
