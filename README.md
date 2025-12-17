@@ -1,2 +1,117 @@
-A sample command-line application with an entrypoint in `bin/`, library code
-in `lib/`, and example unit test in `test/`.
+# Telegram Bot на Dart
+
+Telegram бот, написанный на языке Dart с использованием библиотеки TeleDart. Бот поддерживает систему фильтров и базовые команды.
+
+## Описание
+
+Этот бот предоставляет следующий функционал:
+- Базовые команды (`/start`, `/info`)
+- Создание и управление фильтрами (`/filter`, `/mfilters`, `/filters`)
+- Сохранение пользовательских данных в JSON файлах
+- Обфускация токенов и конфиденциальных данных
+
+## Установка
+
+### Предварительные требования
+
+- Dart SDK версии 3.10.1 или выше
+- Токен Telegram бота (получить у [@BotFather](https://t.me/BotFather))
+
+### Шаги установки
+
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/u006E10011/tg-bot-teleDart.git
+   cd telegram_bot
+   ```
+
+2. **Установите зависимости:**
+   ```bash
+   dart pub get
+   ```
+
+3. **Настройте переменные окружения:**
+   
+   Скопируйте файл `.env.example` в `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Отредактируйте файл `.env` и добавьте ваши данные:
+   ```env
+   TOKEN=your_bot_token_here
+   ADMIN=your_admin_id_here
+   ```
+
+4. **Сгенерируйте файл env.g.dart:**
+   
+   Для работы с переменными окружения необходимо сгенерировать файл `env.g.dart`:
+   ```bash
+   dart run build_runner build
+   ```
+   
+   Этот файл содержит обфусцированные токены и создается автоматически на основе `lib/env/env.dart`.
+
+5. **Запустите бота:**
+   ```bash
+   dart run .\bin\main.dart
+   ```
+
+## Структура проекта
+
+```
+lib/
+├── command/           # Команды бота
+│   ├── command.dart   # Основной класс команд
+│   ├── filters_command.dart
+│   └── listener.dart  # Обработчики событий
+├── core/             # Основная логика
+│   ├── tele_dart_provider.dart
+│   └── token.dart
+├── env/              # Переменные окружения
+│   ├── env.dart      # Конфигурация env
+│   └── env.g.dart    # Сгенерированный файл (не редактировать!)
+├── filter/           # Система фильтров
+│   ├── filter_model.dart
+│   ├── filter_service.dart
+│   └── user_data.dart
+└── util.dart         # Утилиты
+
+data/filter/          # JSON файлы с данными пользователей
+bin/main.dart         # Точка входа
+```
+
+## Команды бота
+
+- `/start` - Запуск бота
+- `/info` - Информация о боте
+- `/filter` - Создать новый фильтр
+- `/mfilters` - Мои фильтры
+- `/filters` - Все фильтры
+
+## Разработка
+
+### Генерация env.g.dart
+
+При изменении файла `lib/env/env.dart` необходимо перегенерировать `env.g.dart`:
+
+```bash
+# Однократная генерация
+dart run build_runner build
+
+# Автоматическая генерация при изменениях
+dart run build_runner watch
+```
+
+## Зависимости
+
+- `teledart: ^0.6.1` - Библиотека для работы с Telegram Bot API
+- `envied: ^1.3.2` - Управление переменными окружения с обфускацией
+- `path: ^1.9.0` - Работа с путями файлов
+
+### Dev зависимости
+
+- `build_runner: ^2.10.4` - Генератор кода
+- `envied_generator: ^1.3.2` - Генератор для envied
+- `lints: ^6.0.0` - Линтер для Dart
+- `test: ^1.25.6` - Фреймворк для тестирования
