@@ -36,11 +36,11 @@ class Listener {
 
     final key = args.sublist(1).join(' ').toLowerCase();
     
-    final existingFilter = await FilterService.checkFilterExists(key);
+    final existingFilter = await FilterService.checkFilterExists(message.chat.id, key);
     if (existingFilter != null) {
       await TeleDartProvider.teleDart!.sendMessage(
         message.chat.id,
-        'Фильтр $key уже существует. Посмотреть список созданных фильтров /mfilters',
+        'Фильтр $key уже существует в этом чате',
       );
       await _sendFilterMedia(message.chat.id, message.messageId, existingFilter);
       return;
@@ -94,8 +94,8 @@ class Listener {
 
     try {
       final user = message.from!;
-      final name = '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim();
-      await FilterService.saveFilter(user.id, name, user.username ?? '', filter);
+      final name = '${user.firstName} ${user.lastName ?? ''}'.trim();
+      await FilterService.saveFilter(message.chat.id, user.id, name, user.username ?? '', filter);
       await TeleDartProvider.teleDart!.sendMessage(
         message.chat.id,
         'Фильтр "$key" сохранён',
@@ -111,13 +111,9 @@ class Listener {
   Future<void> _checkForFilters(Message message) async {
     if (message.text == null || message.from == null) return;
     
-    final filters = await FilterService.getFilters(message.from!.id);
-    final messageText = message.text!.toLowerCase();
-    for (final filter in filters) {
-      if (messageText.contains(filter.key)) {
-        await _sendFilterMedia(message.chat.id, message.messageId, filter);
-        break;
-      }
+    final matchedFilters = await FilterService.checkChatFilters(message.chat.id, message.text!);
+    if (matchedFilters.isNotEmpty) {
+      await _sendFilterMedia(message.chat.id, message.messageId, matchedFilters.first);
     }
   }
 
