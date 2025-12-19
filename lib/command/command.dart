@@ -7,8 +7,7 @@ class Command {
   TeleDart? get teleDart => _teleDart;
   Listener? listener;
 
-  Command(TeleDart teleDart)
-  {
+  Command(TeleDart teleDart) {
     _teleDart = teleDart;
     listener = Listener().addListeners(teleDart);
   }
@@ -17,9 +16,11 @@ class Command {
     _teleDart!.setMyCommands([
       BotCommand(command: "/start", description: "Start"),
       BotCommand(command: "/info", description: "Information"),
-      BotCommand(command: "/filter", description: "Create filter"),
-      BotCommand(command: "/mfilters", description: "My filters"),
-      BotCommand(command: "/filters", description: "All filters"),
+      BotCommand(command: "/fc", description: "Create chat filter"),
+      BotCommand(command: "/fs", description: "Show chat filters"),
+      BotCommand(command: "/mf", description: "Use personal filter"),
+      BotCommand(command: "/mfc", description: "Create personal filter"),
+      BotCommand(command: "/mfs", description: "Show personal filters"),
     ]);
   }
 }

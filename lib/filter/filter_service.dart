@@ -59,42 +59,40 @@ class FilterService {
     return null;
   }
 
-  static Future<void> saveFilter(int chatId, int userId, String name, String username, FilterModel filter) async {
-    final isPrivateChat = chatId == userId;
+  static Future<void> saveChatFilter(int chatId, int userId, String name, String username, FilterModel filter) async {
+    var userData = await _getUserData(chatId, userId) ?? UserData(
+      name: name,
+      username: username,
+      userId: userId,
+      filters: [],
+    );
     
-    if (isPrivateChat) {
-      var userData = await _getPersonalUserData(userId) ?? UserData(
-        name: name,
-        username: username,
-        userId: userId,
-        filters: [],
-      );
-      
-      userData = UserData(
-        name: name,
-        username: username,
-        userId: userId,
-        filters: [...userData.filters, filter],
-      );
-      
-      await _savePersonalUserData(userData);
-    } else {
-      var userData = await _getUserData(chatId, userId) ?? UserData(
-        name: name,
-        username: username,
-        userId: userId,
-        filters: [],
-      );
-      
-      userData = UserData(
-        name: name,
-        username: username,
-        userId: userId,
-        filters: [...userData.filters, filter],
-      );
-      
-      await _saveUserData(chatId, userData);
-    }
+    userData = UserData(
+      name: name,
+      username: username,
+      userId: userId,
+      filters: [...userData.filters, filter],
+    );
+    
+    await _saveUserData(chatId, userData);
+  }
+
+  static Future<void> savePersonalFilter(int userId, String name, String username, FilterModel filter) async {
+    var userData = await _getPersonalUserData(userId) ?? UserData(
+      name: name,
+      username: username,
+      userId: userId,
+      filters: [],
+    );
+    
+    userData = UserData(
+      name: name,
+      username: username,
+      userId: userId,
+      filters: [...userData.filters, filter],
+    );
+    
+    await _savePersonalUserData(userData);
   }
 
   static Future<List<FilterModel>> getChatFilters(int chatId) async {

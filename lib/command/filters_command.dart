@@ -2,24 +2,38 @@ import 'package:teledart/model.dart';
 import 'package:telegram_bot/util.dart';
 
 class FiltersCommand {
-  static Future<void> handleMyFilters(Message message) async {
+  static Future<void> handlePersonalFilter(Message message) async {
     final args = message.text?.split(' ');
-    
-    if (args != null && args.length > 1) {
-      final key = args.sublist(1).join(' ').toLowerCase();
-      final filter = await FilterService.checkPersonalFilterExists(message.from!.id, key);
-      
-      if (filter != null) {
-        await _sendFilterMedia(message.chat.id, message.messageId, filter);
-      } else {
-        await TeleDartProvider.teleDart!.sendMessage(
-          message.chat.id,
-          'Личный фильтр "$key" не найден',
-        );
-      }
+    if (args == null || args.length < 2) {
+      await TeleDartProvider.teleDart!.sendMessage(
+        message.chat.id,
+        'Использование: /mfilter <ключ>',
+      );
       return;
     }
+
+    final key = args.sublist(1).join(' ').toLowerCase();
+    final filter = await FilterService.checkPersonalFilterExists(message.from!.id, key);
     
+    if (filter != null) {
+      await _sendFilterMedia(message.chat.id, message.messageId, filter);
+    } else {
+      await TeleDartProvider.teleDart!.sendMessage(
+        message.chat.id,
+        'Личный фильтр "$key" не найден',
+      );
+    }
+  }
+
+  static Future<void> handlePersonalFilters(Message message) async {
+    if (message.chat.id != message.from!.id) {
+      await TeleDartProvider.teleDart!.sendMessage(
+        message.chat.id,
+        'Личные фильтры можно просматривать только в личных сообщениях с ботом',
+      );
+      return;
+    }
+
     final filters = await FilterService.getPersonalFilters(message.from!.id);
     
     if (filters.isEmpty) {
@@ -37,7 +51,7 @@ class FiltersCommand {
     );
   }
 
-  static Future<void> handleAllFilters(Message message) async {
+  static Future<void> handleChatFilters(Message message) async {
     final allFilters = await FilterService.getChatFilters(message.chat.id);
     
     if (allFilters.isEmpty) {
